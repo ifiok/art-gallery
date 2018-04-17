@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"code.ysitd.cloud/common/go/db"
+
 	"github.com/facebookgo/inject"
 )
 

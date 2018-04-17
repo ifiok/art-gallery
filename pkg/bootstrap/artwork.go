@@ -1,11 +1,13 @@
 package bootstrap
 
 import (
+	"os"
+
 	"code.ysitd.cloud/component/art/gallery/pkg/modals/artwork"
 	"code.ysitd.cloud/toolkit/blob/cache"
+
 	"github.com/facebookgo/inject"
 	"github.com/golang/groupcache"
-	"os"
 )
 
 const cacheGroup = "gallery"
