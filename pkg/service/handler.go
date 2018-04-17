@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const requestTimeout = 3 * time.Minute
+const requestTimeout = 5 * time.Minute
 
 type Handler struct {
 	Artwrok  *artwork.Store     `inject:""`

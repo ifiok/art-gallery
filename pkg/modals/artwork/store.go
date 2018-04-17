@@ -49,6 +49,8 @@ func (s *Store) Get(gctx groupcache.Context, key string, dest groupcache.Sink) (
 		defer cancel()
 	}
 
+	s.Logger.Debugf("Get %s from remote", key)
+
 	obj, err := s.Client.GetObjectWithContext(ctx, s.Bucket, key, minio.GetObjectOptions{})
 	if err != nil {
 		return

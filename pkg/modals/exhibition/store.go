@@ -18,9 +18,11 @@ type Store struct {
 func (s *Store) GetExhibition(ctx context.Context, hostname, path string) (e *Exhibition, err error) {
 	cacheKey := hostname + "/" + path
 	if val, hit := s.Cache.Get(cacheKey); hit {
+		s.Logger.Debugf("Load %s%s from cache", hostname, path)
 		return val.(*Exhibition), nil
 	}
 
+	s.Logger.Debugf("Load %s%s from database", hostname, path)
 	e, err = s.getFromDB(ctx, hostname, path)
 	if err != nil {
 		return
