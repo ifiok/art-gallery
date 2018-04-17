@@ -10,6 +10,9 @@ import (
 var Logger logrus.FieldLogger
 
 func setupLogger() logrus.FieldLogger {
+	if Logger != nil {
+		return Logger
+	}
 	logger := logrus.New()
 	if os.Getenv("VERBOSE") != "" {
 		logger.SetLevel(logrus.DebugLevel)
