@@ -10,15 +10,24 @@ import (
 var handler http.Handler
 
 func init() {
-	var graph inject.Graph
+	logger := setupLogger()
+	graph := inject.Graph{
+		Logger: logger,
+	}
+
+	h := new(service.Handler)
+	graph.Provide(&inject.Object{Value: h})
 
 	injectLogger(&graph)
 	injectCache(&graph)
 	injectDB(&graph)
 	injectMinio(&graph)
 
-	handler = new(service.Handler)
-	graph.Provide(&inject.Object{Value: handler})
+	if err := graph.Populate(); err != nil {
+		logger.Fatalln(err)
+	}
+
+	handler = h
 }
 
 func GetHandler() http.Handler {
