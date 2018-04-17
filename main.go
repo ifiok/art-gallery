@@ -6,27 +6,54 @@ import (
 	"time"
 
 	"code.ysitd.cloud/component/art/gallery/pkg/bootstrap"
-	"code.ysitd.cloud/component/art/gallery/pkg/bootstrap/groupcache"
+	"code.ysitd.cloud/toolkit/cache/groupcache"
+	"code.ysitd.cloud/toolkit/cache/groupcache/k8s"
+
 	"github.com/gorilla/handlers"
 	"github.com/sirupsen/logrus"
 )
 
 const groupUpdateInterval = time.Minute * 5
 
+func init() {
+	groupcache.SetSingleNode(os.Getenv("SINGLE_NODE") != "")
+	k8s.Setup(2)
+}
+
 func main() {
 	logger := bootstrap.Logger
 	mainLogger := logger.WithField("source", "main")
-	if !groupcache.SingleNode {
-		go groupcache.Listen(logger.WithField("source", "groupcache_http"))
+
+	if !groupcache.IsSingleNode() {
+		go func() {
+			if err := groupcache.Listen(); err != nil {
+				logger.WithField("source", "groupcache_http").Errorln(err)
+			}
+		}()
 		go func(logger logrus.FieldLogger) {
 			for {
 				time.Sleep(groupUpdateInterval)
-				groupcache.UpdatePeer(logger)
+				if err := k8s.Update(); err != nil {
+					logger.Errorln(err)
+				}
 			}
 		}(logger.WithField("source", "groupcache_update"))
 	}
 
-	handler := bootstrap.GetHandler()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	mainLogger.Infof("Listen at %s", port)
+
+	if err := http.ListenAndServe(":"+port, makeHandler(logger)); err != nil {
+		mainLogger.Fatalln(err)
+	}
+}
+
+func makeHandler(logger logrus.FieldLogger) (handler http.Handler) {
+	handler = bootstrap.GetHandler()
 
 	httpLog := logger.WithField("source", "http")
 	handler = handlers.CombinedLoggingHandler(httpLog.Writer(), handler)
@@ -36,15 +63,5 @@ func main() {
 		handlers.RecoveryLogger(recoverLogger),
 		handlers.PrintRecoveryStack(true),
 	)(handler)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	mainLogger.Infof("Listen at %s", port)
-
-	if err := http.ListenAndServe(":"+port, handler); err != nil {
-		mainLogger.Fatalln(err)
-	}
+	return
 }

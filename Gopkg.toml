@@ -64,3 +64,7 @@
 [[constraint]]
   branch = "master"
   name = "code.ysitd.cloud/toolkit/blob"
+
+[[constraint]]
+  branch = "master"
+  name = "code.ysitd.cloud/toolkit/cache"

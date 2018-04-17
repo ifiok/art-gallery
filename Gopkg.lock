@@ -15,6 +15,15 @@
 
 [[projects]]
   branch = "master"
+  name = "code.ysitd.cloud/toolkit/cache"
+  packages = [
+    "groupcache",
+    "groupcache/k8s"
+  ]
+  revision = "d5bf0857b0e31592c92cd0d234c8b0672148815e"
+
+[[projects]]
+  branch = "master"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
   revision = "bb3d318650d48840a39aa21a027c6630e198e626"
@@ -159,6 +168,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d0efc89c71ee90e990422d688c02fa4fde6b236216f65faf9fb287da8ac40352"
+  inputs-digest = "c690258b43c89273ae50809543f576c5e3d9264bab63b4f135cb7f4be5b3aee3"
   solver-name = "gps-cdcl"
   solver-version = 1
