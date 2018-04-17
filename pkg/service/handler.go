@@ -14,9 +14,9 @@ import (
 const requestTimeout = 5 * time.Minute
 
 type Handler struct {
-	Artwrok  *artwork.Store     `inject:""`
-	Exhibion *exhibition.Store  `inject:""`
-	Logger   logrus.FieldLogger `inject:"handler logger"`
+	Artwrok    *artwork.Store     `inject:""`
+	Exhibition *exhibition.Store  `inject:""`
+	Logger     logrus.FieldLogger `inject:"handler logger"`
 }
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -26,10 +26,14 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel = context.WithTimeout(ctx, requestTimeout)
 		defer cancel()
 	}
-	e, err := h.Exhibion.GetExhibition(ctx, r.Host, r.URL.Path)
+
+	e, err := h.Exhibition.GetExhibition(ctx, r.Host, r.URL.Path)
 	if err != nil {
 		h.Logger.Errorln(err)
 		http.Error(w, "Error during routing", http.StatusInternalServerError)
+		return
+	} else if e == nil {
+		http.NotFound(w, r)
 		return
 	}
 
