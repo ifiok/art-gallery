@@ -11,7 +11,7 @@ import (
 
 type Store struct {
 	Pool   db.Pool            `inject:"db"`
-	Cache  cache.Cache        `inject:""`
+	Cache  *cache.Cache       `inject:""`
 	Logger logrus.FieldLogger `inject:"exhibition logger"`
 }
 
