@@ -25,6 +25,6 @@ func injectMinio(graph *inject.Graph) {
 	bucket := os.Getenv("S3_BUCKET")
 	graph.Provide(
 		&inject.Object{Value: setupMinio()},
-		&inject.Object{Name: "bucket", Value: &bucket},
+		&inject.Object{Name: "bucket", Value: bucket},
 	)
 }
