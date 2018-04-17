@@ -9,6 +9,12 @@
 
 [[projects]]
   branch = "master"
+  name = "code.ysitd.cloud/toolkit/blob"
+  packages = ["cache"]
+  revision = "80f719382800f5f26dee12aa430239b8da184038"
+
+[[projects]]
+  branch = "master"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
   revision = "bb3d318650d48840a39aa21a027c6630e198e626"
@@ -153,6 +159,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "88736b46ca6d517fff1ed15344b9d00a188d01829f64f69bdaf02a9f9e2768da"
+  inputs-digest = "d0efc89c71ee90e990422d688c02fa4fde6b236216f65faf9fb287da8ac40352"
   solver-name = "gps-cdcl"
   solver-version = 1

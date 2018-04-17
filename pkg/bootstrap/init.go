@@ -9,6 +9,8 @@ import (
 
 var handler http.Handler
 
+type graphInjectFunc func(*inject.Graph)
+
 func init() {
 	logger := setupLogger()
 	graph := inject.Graph{
@@ -18,10 +20,16 @@ func init() {
 	h := new(service.Handler)
 	graph.Provide(&inject.Object{Value: h})
 
-	injectLogger(&graph)
-	injectCache(&graph)
-	injectDB(&graph)
-	injectMinio(&graph)
+	injects := []graphInjectFunc{
+		injectLogger,
+		injectCache,
+		injectDB,
+		injectArtworkStore,
+	}
+
+	for _, injectFn := range injects {
+		injectFn(&graph)
+	}
 
 	if err := graph.Populate(); err != nil {
 		logger.Fatalln(err)
