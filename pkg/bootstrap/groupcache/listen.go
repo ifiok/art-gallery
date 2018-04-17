@@ -11,7 +11,8 @@ func Listen(logger logrus.FieldLogger) {
 	pool := picker.(*groupcache.HTTPPool)
 	mux := http.NewServeMux()
 	mux.Handle("/_groupcache/", pool)
+	logger.Infoln("Groupcache listen at 50005")
 	if err := http.ListenAndServe(":50005", mux); err != nil {
-		logger.Errorln(err)
+		logger.Fatalln(err)
 	}
 }
