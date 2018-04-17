@@ -19,8 +19,10 @@ func main() {
 	if !groupcache.SingleNode {
 		go groupcache.Listen(logger.WithField("source", "groupcache_http"))
 		go func(logger logrus.FieldLogger) {
-			time.Sleep(groupUpdateInterval)
-			groupcache.UpdatePeer(logger)
+			for {
+				time.Sleep(groupUpdateInterval)
+				groupcache.UpdatePeer(logger)
+			}
 		}(logger.WithField("source", "groupcache_update"))
 	}
 
