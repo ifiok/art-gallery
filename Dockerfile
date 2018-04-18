@@ -9,6 +9,8 @@ RUN dep ensure -vendor-only && \
 
 FROM alpine:3.6
 
+RUN apk add --no-cache ca-certificates
+
 COPY --from=builder /go/code.ysitd.cloud/component/art/gallery/gallery /
 
 CMD ["/gallery"]
