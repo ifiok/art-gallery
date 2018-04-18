@@ -5,7 +5,7 @@ WORKDIR /go/src/code.ysitd.cloud/component/art/gallery
 COPY .  /go/src/code.ysitd.cloud/component/art/gallery
 
 RUN dep ensure -vendor-only && \
-    go build -v main.go
+    go build -v
 
 FROM alpine:3.6
 
