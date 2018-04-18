@@ -1,6 +1,6 @@
 FROM ysitd/dep AS builder
 
-WORKDIR /go/src//code.ysitd.cloud/component/art/gallery
+WORKDIR /go/src/code.ysitd.cloud/component/art/gallery
 
 COPY .  /go/src/code.ysitd.cloud/component/art/gallery
 
