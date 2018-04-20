@@ -28,6 +28,26 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		defer cancel()
 	}
 
+	done := make(chan bool)
+
+	go func(done chan bool) {
+		h.handleHTTP(ctx, w, r)
+		done <- true
+	}(done)
+
+	select {
+	case <-done:
+		close(done)
+		break
+	case <-ctx.Done():
+		if err := ctx.Err(); err == context.DeadlineExceeded {
+			http.Error(w, "Timeout", http.StatusGatewayTimeout)
+		}
+		break
+	}
+}
+
+func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	e, err := h.Exhibition.GetExhibition(ctx, r.Host, r.URL.Path)
 	if err != nil {
 		h.Logger.Errorln(err)
