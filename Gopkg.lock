@@ -8,10 +8,14 @@
   revision = "62b37a1348f482394de2975ead038ff7016b9a62"
 
 [[projects]]
-  branch = "master"
   name = "code.ysitd.cloud/toolkit/blob"
-  packages = ["cache"]
-  revision = "80f719382800f5f26dee12aa430239b8da184038"
+  packages = [
+    "cache",
+    "client",
+    "client/minio"
+  ]
+  revision = "c1133888e22c33e9c44e9905d90f56504ed5ca28"
+  version = "1.0.0"
 
 [[projects]]
   branch = "master"
@@ -20,7 +24,7 @@
     "groupcache",
     "groupcache/k8s"
   ]
-  revision = "d5bf0857b0e31592c92cd0d234c8b0672148815e"
+  revision = "422d864a992df7660f8959f183c505a60a0d78dd"
 
 [[projects]]
   branch = "master"
@@ -133,7 +137,7 @@
     "idna",
     "lex/httplex"
   ]
-  revision = "8d16fa6dc9a85c1cd3ed24ad08ff21cf94f10888"
+  revision = "d41e8174641f662c5a2d1c7a5f9e828788eb8706"
 
 [[projects]]
   branch = "master"
@@ -142,7 +146,7 @@
     "unix",
     "windows"
   ]
-  revision = "ecfd8b563e1320e7282dccf28ad48ec2c68aaebf"
+  revision = "a2a45943ae67364d56c5d7d62dee78cff16c8dc8"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -168,6 +172,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c690258b43c89273ae50809543f576c5e3d9264bab63b4f135cb7f4be5b3aee3"
+  inputs-digest = "2a374e8dbd7e2649aced0d0d72abd20a345bcff5a01d43230e27fc2c72c727db"
   solver-name = "gps-cdcl"
   solver-version = 1

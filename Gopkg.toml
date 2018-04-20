@@ -62,8 +62,8 @@
   version = "1.3.0"
 
 [[constraint]]
-  branch = "master"
   name = "code.ysitd.cloud/toolkit/blob"
+  version = "1.0.0"
 
 [[constraint]]
   branch = "master"

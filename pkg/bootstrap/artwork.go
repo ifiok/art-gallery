@@ -5,6 +5,7 @@ import (
 
 	"code.ysitd.cloud/component/art/gallery/pkg/modals/artwork"
 	"code.ysitd.cloud/toolkit/blob/cache"
+	"code.ysitd.cloud/toolkit/blob/client/minio"
 
 	"github.com/facebookgo/inject"
 	"github.com/golang/groupcache"
@@ -20,7 +21,7 @@ func setupBlobStore() *cache.CachedBlobStore {
 		}
 	}
 
-	getter := cache.NewGetter(setupMinio(), os.Getenv("S3_BUCKET"), Logger.WithField("source", "artwork"))
+	getter := cache.NewGetter(&minio.Store{Client: setupMinio()}, os.Getenv("S3_BUCKET"), Logger.WithField("source", "artwork"))
 	group := groupcache.NewGroup(cacheGroup, cacheSize, getter)
 	return &cache.CachedBlobStore{
 		Group: group,
