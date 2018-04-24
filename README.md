@@ -1,5 +1,7 @@
 # Art Gallery (Frontend Resource Serving)
 
+Art Gallery is micro service for serving frontend resource
+
 ## Requirement
 
 - Golang 1.10.1
