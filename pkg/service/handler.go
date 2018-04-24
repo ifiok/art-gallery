@@ -64,5 +64,11 @@ func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http
 		http.Error(w, "Error during loading", http.StatusBadGateway)
 		return
 	}
+
+	header := w.Header()
+
+	header.Set("Content-SHA256", e.Hash)
+	header.Set("Etag", e.Hash)
+
 	http.ServeContent(w, r, e.Pathname, e.CommitTime, bytes.NewReader(blob))
 }
