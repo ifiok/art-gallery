@@ -15,7 +15,7 @@ func setupMinio() (client *minio.Client) {
 		endpoint,
 		os.Getenv("S3_ACCESS_KEY_ID"),
 		os.Getenv("S3_SECRET_ACCESS_KEY"),
-		os.Getenv("S3_INSCRUE") == "",
+		os.Getenv("S3_INSECURE") == "",
 	)
 	return
 }
