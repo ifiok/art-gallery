@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	"code.ysitd.cloud/component/art/gallery/pkg/modals/artwork"
@@ -54,8 +56,41 @@ func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http
 		http.Error(w, "Error during routing", http.StatusInternalServerError)
 		return
 	} else if e == nil {
-		http.NotFound(w, r)
+		http.Error(w, "421 Misdirected Request", 421)
 		return
+	}
+
+	header := w.Header()
+
+	if match := r.Header.Get("If-None-Match"); match != "" {
+		match = strings.Trim(match, "\"'")
+		if match == e.Hash {
+			w.WriteHeader(http.StatusNotModified)
+			return
+		}
+	}
+
+	header.Set("Content-SHA256", e.Hash)
+	header.Set("Etag", "\""+e.Hash+"\"")
+	header.Set("Cache-Control", "max-age=36000") // 1 Hours
+
+	origin := r.Header.Get("Origin")
+
+	if origin != "" {
+		originUrl, err := url.Parse(origin)
+		if err != nil {
+			h.Logger.Errorln(err)
+			http.Error(w, "Error in parse origin", http.StatusBadRequest)
+			return
+		}
+
+		if originUrl.Hostname() != r.Host {
+			if e.CORS.Valid {
+				header.Set("Access-Control-Allow-Origin", e.CORS.String)
+			} else {
+				return
+			}
+		}
 	}
 
 	blob, err := h.Artwrok.GetWithExhibition(ctx, e)
@@ -64,11 +99,6 @@ func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http
 		http.Error(w, "Error during loading", http.StatusBadGateway)
 		return
 	}
-
-	header := w.Header()
-
-	header.Set("Content-SHA256", e.Hash)
-	header.Set("Etag", e.Hash)
 
 	http.ServeContent(w, r, e.Pathname, e.CommitTime, bytes.NewReader(blob))
 }
