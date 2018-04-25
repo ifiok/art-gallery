@@ -104,7 +104,7 @@ func (h *Handler) handleGet(ctx context.Context, w http.ResponseWriter, r *http.
 
 	header.Set("Content-SHA256", e.Hash)
 	header.Set("Etag", "\""+e.Hash+"\"")
-	header.Set("Cache-Control", "max-age=14400") // 1 Hours
+	header.Set("Cache-Control", "max-age=14400") // 4 Hours
 
 	blob, err := h.Artwrok.GetWithExhibition(ctx, e)
 	if err != nil {
