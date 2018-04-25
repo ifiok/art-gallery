@@ -52,6 +52,8 @@ func (s *Store) GetExhibitionWithHost(ctx context.Context, hostname string) (e *
 	if err != nil {
 		return
 	}
+
+	return
 }
 
 func (s *Store) GetExhibitionWithPath(ctx context.Context, hostname, path string) (e *Exhibition, err error) {
