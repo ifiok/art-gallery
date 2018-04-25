@@ -49,35 +49,46 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) handleMethod(ctx context.Context, w http.ResponseWriter, r *http.Request) (done bool) {
-	if r.Method == http.MethodGet || r.Method == http.MethodHead {
-		return false
-	}
-
-	if r.Method == http.MethodOptions {
-		w.WriteHeader(http.StatusOK)
-	} else {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-	}
-
-	w.Header().Set("Allow", "OPTIONS, GET, HEAD")
-
-	return true
-
-}
-
 func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-	if h.handleMethod(ctx, w, r) {
+	if r.Method == http.MethodGet || r.Method == http.MethodHead {
+		h.handleGet(ctx, w, r)
+		return
+	} else if r.Method == http.MethodOptions {
+		h.handlePreflight(ctx, w, r)
 		return
 	}
 
-	e, err := h.Exhibition.GetExhibition(ctx, r.Host, r.URL.Path)
+	w.WriteHeader(http.StatusMethodNotAllowed)
+	w.Header().Set("Allow", "OPTIONS, GET, HEAD")
+}
+
+func (h *Handler) handlePreflight(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	e, err := h.Exhibition.GetExhibitionWithHost(ctx, r.Host)
 	if err != nil {
 		h.Logger.Errorln(err)
 		http.Error(w, "Error during routing", http.StatusInternalServerError)
 		return
 	} else if e == nil {
 		http.Error(w, "421 Misdirected Request", 421)
+		return
+	}
+	if !h.handleOrigin(e, w, r) {
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
+func (h *Handler) handleGet(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	e, err := h.Exhibition.GetExhibitionWithPath(ctx, r.Host, r.URL.Path)
+	if err != nil {
+		h.Logger.Errorln(err)
+		http.Error(w, "Error during routing", http.StatusInternalServerError)
+		return
+	} else if e == nil {
+		http.Error(w, "421 Misdirected Request", 421)
+		return
+	}
+
+	if h.handleOrigin(e, w, r) {
 		return
 	}
 
@@ -93,26 +104,7 @@ func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http
 
 	header.Set("Content-SHA256", e.Hash)
 	header.Set("Etag", "\""+e.Hash+"\"")
-	header.Set("Cache-Control", "max-age=36000") // 1 Hours
-
-	origin := r.Header.Get("Origin")
-
-	if origin != "" {
-		originUrl, err := url.Parse(origin)
-		if err != nil {
-			h.Logger.Errorln(err)
-			http.Error(w, "Error in parse origin", http.StatusBadRequest)
-			return
-		}
-
-		if originUrl.Hostname() != r.Host {
-			if e.CORS.Valid {
-				header.Set("Access-Control-Allow-Origin", e.CORS.String)
-			} else {
-				return
-			}
-		}
-	}
+	header.Set("Cache-Control", "max-age=14400") // 1 Hours
 
 	blob, err := h.Artwrok.GetWithExhibition(ctx, e)
 	if err != nil {
@@ -122,4 +114,29 @@ func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http
 	}
 
 	http.ServeContent(w, r, e.Pathname, e.CommitTime, bytes.NewReader(blob))
+}
+
+func (h *Handler) handleOrigin(e *exhibition.Exhibition, w http.ResponseWriter, r *http.Request) (finish bool) {
+	if origin := r.Header.Get("Origin"); origin != "" {
+		originUrl, err := url.Parse(origin)
+		if err != nil {
+			h.Logger.Errorln(err)
+			http.Error(w, "Error in parse origin", http.StatusBadRequest)
+			return true
+		}
+
+		header := w.Header()
+
+		if e.CORS.Valid && validateCorsOrigin(originUrl.Hostname(), e.CORS.String) {
+			header.Set("Access-Control-Allow-Origin", e.CORS.String)
+			if e.CORS.String == "*" {
+				header.Add("Vary", "Origin")
+			}
+		} else {
+			w.WriteHeader(http.StatusForbidden)
+		}
+		return true
+	}
+
+	return false
 }

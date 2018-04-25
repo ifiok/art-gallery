@@ -10,36 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Store struct {
-	Pool   db.Pool            `inject:"db"`
-	Cache  *cache.Cache       `inject:""`
-	Logger logrus.FieldLogger `inject:"exhibition logger"`
-}
-
-func (s *Store) GetExhibition(ctx context.Context, hostname, path string) (e *Exhibition, err error) {
-	cacheKey := hostname + "/" + path
-	if val, hit := s.Cache.Get(cacheKey); hit {
-		s.Logger.Debugf("Load %s%s from cache", hostname, path)
-		return val.(*Exhibition), nil
-	}
-
-	s.Logger.Debugf("Load %s%s from database", hostname, path)
-	e, err = s.getFromDB(ctx, hostname, path)
-	if err != nil {
-		return
-	}
-	s.Cache.SetDefault(cacheKey, e)
-	return
-}
-
-func (s *Store) getFromDB(ctx context.Context, hostname, path string) (e *Exhibition, err error) {
-	conn, err := s.Pool.Acquire()
-	if err != nil {
-		return
-	}
-	defer conn.Close()
-
-	query := `
+const hostPathQuery = `
 WITH recursive union_revision AS (
   WITH target_exhibition AS (
     SELECT exhibition.id, revision, cors FROM exhibition
@@ -62,7 +33,73 @@ ORDER BY r.commit_time DESC
 LIMIT 1
 `
 
-	row := conn.QueryRowContext(ctx, query, hostname, path)
+const hostQuery = "SELECT exhibition, cors FROM exhibition_host WHERE hostname = $1"
+
+type Store struct {
+	Pool   db.Pool            `inject:"db"`
+	Cache  *cache.Cache       `inject:""`
+	Logger logrus.FieldLogger `inject:"exhibition logger"`
+}
+
+func (s *Store) GetExhibitionWithHost(ctx context.Context, hostname string) (e *Exhibition, err error) {
+	cacheKey := hostname + "/*"
+	if val, hit := s.Cache.Get(cacheKey); hit {
+		s.Logger.Debugf("Load %s from cache", hostname)
+		return val.(*Exhibition), nil
+	}
+	s.Logger.Debugf("Load %s from database", hostname)
+	e, err = s.getFromDB(ctx, hostname)
+	if err != nil {
+		return
+	}
+}
+
+func (s *Store) GetExhibitionWithPath(ctx context.Context, hostname, path string) (e *Exhibition, err error) {
+	cacheKey := hostname + "/" + path
+	if val, hit := s.Cache.Get(cacheKey); hit {
+		s.Logger.Debugf("Load %s%s from cache", hostname, path)
+		return val.(*Exhibition), nil
+	}
+
+	s.Logger.Debugf("Load %s%s from database", hostname, path)
+	e, err = s.getFromDBWithPath(ctx, hostname, path)
+	if err != nil {
+		return
+	}
+	s.Cache.SetDefault(cacheKey, e)
+	return
+}
+
+func (s *Store) getFromDB(ctx context.Context, hostname string) (e *Exhibition, err error) {
+	conn, err := s.Pool.Acquire()
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	row := conn.QueryRowContext(ctx, hostQuery, hostname)
+
+	var instance Exhibition
+
+	if err := row.Scan(&instance.CommitTime, &instance.Pathname, &instance.Hash, &instance.ID, &instance.CORS); err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	e = &instance
+
+	return
+}
+
+func (s *Store) getFromDBWithPath(ctx context.Context, hostname, path string) (e *Exhibition, err error) {
+	conn, err := s.Pool.Acquire()
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	row := conn.QueryRowContext(ctx, hostPathQuery, hostname, path)
 
 	var instance Exhibition
 
