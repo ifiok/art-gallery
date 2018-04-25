@@ -49,7 +49,28 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) handleMethod(ctx context.Context, w http.ResponseWriter, r *http.Request) (done bool) {
+	if r.Method == http.MethodGet || r.Method == http.MethodHead {
+		return false
+	}
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+
+	w.Header().Set("Allow", "OPTIONS, GET, HEAD")
+
+	return true
+
+}
+
 func (h *Handler) handleHTTP(ctx context.Context, w http.ResponseWriter, r *http.Request) {
+	if h.handleMethod(ctx, w, r) {
+		return
+	}
+
 	e, err := h.Exhibition.GetExhibition(ctx, r.Host, r.URL.Path)
 	if err != nil {
 		h.Logger.Errorln(err)
