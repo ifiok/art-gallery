@@ -8,16 +8,6 @@
   revision = "62b37a1348f482394de2975ead038ff7016b9a62"
 
 [[projects]]
-  name = "code.ysitd.cloud/toolkit/blob"
-  packages = [
-    "cache",
-    "client",
-    "client/minio"
-  ]
-  revision = "cbba4bda5d61f8f7ed6099aef071cf26d42650ef"
-  version = "1.1.0"
-
-[[projects]]
   branch = "master"
   name = "code.ysitd.cloud/toolkit/cache"
   packages = [
@@ -169,9 +159,19 @@
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
 
+[[projects]]
+  branch = "master"
+  name = "golang.ysitd.cloud/blob"
+  packages = [
+    ".",
+    "cache",
+    "minio"
+  ]
+  revision = "10f5362634ebf98fe4e964c3c4b04507bbffc653"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2a374e8dbd7e2649aced0d0d72abd20a345bcff5a01d43230e27fc2c72c727db"
+  inputs-digest = "56cd2e7a4af85eb5276882123e0001bb079e0db5d778ce7e37b96701c7762b7c"
   solver-name = "gps-cdcl"
   solver-version = 1

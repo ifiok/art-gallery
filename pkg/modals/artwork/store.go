@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"code.ysitd.cloud/component/art/gallery/pkg/modals/exhibition"
-	"code.ysitd.cloud/toolkit/blob/cache"
+	"golang.ysitd.cloud/blob/cache"
 )
 
 type Store struct {
-	*cache.CachedBlobStore
+	cache.CachedBlobStore `inject:"inline"`
 }
 
 func (s *Store) GetWithExhibition(ctx context.Context, e *exhibition.Exhibition) (dest []byte, err error) {
