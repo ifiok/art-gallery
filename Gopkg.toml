@@ -31,10 +31,6 @@
 
 [[constraint]]
   branch = "master"
-  name = "code.ysitd.cloud/common/go"
-
-[[constraint]]
-  branch = "master"
   name = "github.com/facebookgo/inject"
 
 [[constraint]]
@@ -67,4 +63,8 @@
 
 [[constraint]]
   name = "golang.ysitd.cloud/cache"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "golang.ysitd.cloud/db"
   version = "1.0.0"

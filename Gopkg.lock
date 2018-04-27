@@ -3,12 +3,6 @@
 
 [[projects]]
   branch = "master"
-  name = "code.ysitd.cloud/common/go"
-  packages = ["db"]
-  revision = "62b37a1348f482394de2975ead038ff7016b9a62"
-
-[[projects]]
-  branch = "master"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
   revision = "02af3965c54e8cacf948b97fef38925c4120652c"
@@ -97,12 +91,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/tonyhhyip/go-di-container"
-  packages = ["."]
-  revision = "42c988ba8772b2c88d8cbed4439aa481bf8cb255"
-
-[[projects]]
-  branch = "master"
   name = "golang.org/x/crypto"
   packages = [
     "argon2",
@@ -169,9 +157,15 @@
   revision = "3dcce4bcd976857d08cd002060cd50a7a6456811"
   version = "1.0.0"
 
+[[projects]]
+  name = "golang.ysitd.cloud/db"
+  packages = ["."]
+  revision = "4c1ee5c9c27eacbca23595d3dd3382d556ece59a"
+  version = "1.0.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "162db4c0564704e02f59c738ddea95f776608cd839e912964e0061a7ee8d2afe"
+  inputs-digest = "d1e8928efbcbff338439ccb1369ebab26dfedc50876b1764d8eb1a307a2dd91f"
   solver-name = "gps-cdcl"
   solver-version = 1

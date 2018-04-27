@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"code.ysitd.cloud/common/go/db"
+	"golang.ysitd.cloud/db"
 
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
@@ -36,7 +36,7 @@ LIMIT 1
 const hostQuery = "SELECT exhibition, cors FROM exhibition_host WHERE hostname = $1"
 
 type Store struct {
-	Pool   db.Pool            `inject:"db"`
+	Pool   db.Opener          `inject:"db"`
 	Cache  *cache.Cache       `inject:""`
 	Logger logrus.FieldLogger `inject:"exhibition logger"`
 }

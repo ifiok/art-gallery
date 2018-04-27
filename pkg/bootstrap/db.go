@@ -5,13 +5,13 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"code.ysitd.cloud/common/go/db"
+	"golang.ysitd.cloud/db"
 
 	"github.com/facebookgo/inject"
 )
 
-func createDB() db.Pool {
-	return db.NewPool("postgres", os.Getenv("DB_URL"))
+func createDB() db.Opener {
+	return db.NewOpener("postgres", os.Getenv("DB_URL"))
 }
 
 func injectDB(graph *inject.Graph) {
