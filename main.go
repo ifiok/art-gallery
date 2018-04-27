@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"code.ysitd.cloud/component/art/gallery/pkg/bootstrap"
-	"code.ysitd.cloud/toolkit/cache/groupcache"
-	"code.ysitd.cloud/toolkit/cache/groupcache/k8s"
+	"golang.ysitd.cloud/cache/groupcache"
+	"golang.ysitd.cloud/cache/groupcache/k8s"
 
 	"github.com/gorilla/handlers"
 	"github.com/sirupsen/logrus"
