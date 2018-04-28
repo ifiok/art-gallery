@@ -9,7 +9,7 @@ go:
   - '1.10'
   - '1.10.1'
 
-go_import_path: code.ysitd.cloud/component/art/gallery
+go_import_path: code.ysitd.cloud/art/gallery
 
 env:
   - DEP_VERSION="0.4.1"
