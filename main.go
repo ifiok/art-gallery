@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"code.ysitd.cloud/component/art/gallery/pkg/bootstrap"
+	"code.ysitd.cloud/art/gallery/pkg/bootstrap"
 	"golang.ysitd.cloud/cache/groupcache"
 	"golang.ysitd.cloud/cache/groupcache/k8s"
 

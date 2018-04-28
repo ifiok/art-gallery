@@ -10,14 +10,13 @@ import (
 	"github.com/facebookgo/inject"
 )
 
-func createDB() db.Opener {
+func createDB() *db.GeneralOpener {
 	return db.NewOpener("postgres", os.Getenv("DB_URL"))
 }
 
 func injectDB(graph *inject.Graph) {
 	pool := createDB()
 	graph.Provide(&inject.Object{
-		Name:  "db",
 		Value: pool,
 	})
 }

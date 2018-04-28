@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"code.ysitd.cloud/component/art/gallery/pkg/modals/artwork"
-	"code.ysitd.cloud/component/art/gallery/pkg/modals/exhibition"
+	"code.ysitd.cloud/art/gallery/pkg/modals/artwork"
+	"code.ysitd.cloud/art/gallery/pkg/modals/exhibition"
 
 	"github.com/sirupsen/logrus"
 )

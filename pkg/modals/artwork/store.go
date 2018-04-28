@@ -3,7 +3,7 @@ package artwork
 import (
 	"context"
 
-	"code.ysitd.cloud/component/art/gallery/pkg/modals/exhibition"
+	"code.ysitd.cloud/art/gallery/pkg/modals/exhibition"
 	"golang.ysitd.cloud/blob/cache"
 )
 

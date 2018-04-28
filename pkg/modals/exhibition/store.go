@@ -36,7 +36,7 @@ LIMIT 1
 const hostQuery = "SELECT exhibition, cors FROM exhibition_host WHERE hostname = $1"
 
 type Store struct {
-	Pool   db.Opener          `inject:"db"`
+	Opener *db.GeneralOpener  `inject:""`
 	Cache  *cache.Cache       `inject:""`
 	Logger logrus.FieldLogger `inject:"exhibition logger"`
 }
@@ -73,7 +73,7 @@ func (s *Store) GetExhibitionWithPath(ctx context.Context, hostname, path string
 }
 
 func (s *Store) getFromDB(ctx context.Context, hostname string) (e *Exhibition, err error) {
-	conn, err := s.Pool.Acquire()
+	conn, err := s.Opener.Open()
 	if err != nil {
 		return
 	}
@@ -95,7 +95,7 @@ func (s *Store) getFromDB(ctx context.Context, hostname string) (e *Exhibition, 
 }
 
 func (s *Store) getFromDBWithPath(ctx context.Context, hostname, path string) (e *Exhibition, err error) {
-	conn, err := s.Pool.Acquire()
+	conn, err := s.Opener.Open()
 	if err != nil {
 		return
 	}
